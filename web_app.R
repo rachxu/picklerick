@@ -66,13 +66,13 @@ ui <- fluidPage(title = "Rick and Morty",
                            tableOutput("locat")),
                   
                   tabPanel(title = "Episode", 
-                           selectInput("s", "Season", c("", 1:4)),
+                           selectInput("s", "Season (leave episode empty to obtain the entire season)", c("", 1:4)),
                            selectInput("e", "Episode", c("", 1:11)),
                            actionButton("ep", "Go"),
                            tableOutput("eps"))
                 ),
                 
-                
+                # suppress warning when first launching the app (due to empty urls)
                 tags$style(type="text/css",
                            ".shiny-output-error { visibility: hidden; }",
                            ".shiny-output-error:before { visibility: hidden; }")
@@ -145,12 +145,14 @@ server <- function(input, output, session) {
   rv4 <- reactiveValues(data=NULL)
   
   observeEvent(input$ep, {
-    req(input$s != "" & input$e != "")
-    if (as.numeric(input$e)>9)
+    req(input$s != "")
+    if (input$e == "")
+      rv4$data = str_glue("S", 0, input$s)
+    else if (as.numeric(input$e)>9)
       rv4$data = str_glue("S", 0, input$s, "E", input$e)
     else
       rv4$data = str_glue("S", 0, input$s, "E", 0, input$e)
-    rv4$tbl = all_ep %>% filter(episode == rv4$data)
+    rv4$tbl = all_ep %>% filter(grepl(rv4$data, episode))
   })
   
   output$eps = renderTable({
@@ -159,8 +161,8 @@ server <- function(input, output, session) {
     else
       rv4$tbl[,-c(5:7)]
   }, caption = "Episode information:",
-  caption.placement = getOption("xtable.caption.placement", "top"), 
-  caption.width = getOption("xtable.caption.width", NULL))
+     caption.placement = getOption("xtable.caption.placement", "top"), 
+     caption.width = getOption("xtable.caption.width", NULL))
   
 }
 
