@@ -7,4 +7,4 @@ What you can do with this web app:
 
 • Find a certain location by its name
 
-• Find information about an episode
+• Find information about a season or one episode
