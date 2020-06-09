@@ -4,6 +4,7 @@ library(stringr)
 library(dplyr)
 library(httr)
 library(xtable)
+library(DT)
 
 # scrap all characters
 link = rep(NA,30); data = list()
@@ -45,7 +46,7 @@ ui <- fluidPage(title = "Rick and Morty",
                                     actionButton("search", "Search")),
                              column(8,
                                     tableOutput("byNam"),
-                                    tableOutput("epis"))),
+                                    DT::dataTableOutput("epis"))),
                            br(),
                            
                            column(6, 
@@ -96,16 +97,15 @@ server <- function(input, output, session) {
   output$byNam = renderTable({
     # display one row for one character
     rv$data[1,-c(7:8)]
-  }, caption = "Basic information about this character:",
+  }, caption = "Basic information:",
   caption.placement = getOption("xtable.caption.placement", "top"), 
   caption.width = getOption("xtable.caption.width", NULL))
   
-  output$epis = renderTable({
+  output$epis = DT::renderDataTable(
     # display all episode that a character appeared in
-    data.frame(rv$names) %>% rename(Episode_Name = rv.names)
-  }, caption = "Episodes that this character appeared on:",
-  caption.placement = getOption("xtable.caption.placement", "top"), 
-  caption.width = getOption("xtable.caption.width", NULL))
+    data.frame(rv$names) %>% rename(Episode_Name = rv.names), 
+    caption = str_glue("Episodes that ", input$nom ," appeared on:"),
+    options = list(pageLength = 5))
   
   
   #### filtering character ####
@@ -125,8 +125,8 @@ server <- function(input, output, session) {
       # Get the characters that satisfy the conditions given
       fromJSON(rv2$data)$results[,-c(7:12)]  # columns of data frames removed
   }, caption = "Character(s) that match the condition(s):",
-  caption.placement = getOption("xtable.caption.placement", "top"), 
-  caption.width = getOption("xtable.caption.width", NULL))
+     caption.placement = getOption("xtable.caption.placement", "top"), 
+     caption.width = getOption("xtable.caption.width", NULL))
   
   #### location ####
   rv3 <- reactiveValues(data=NULL)
@@ -136,10 +136,11 @@ server <- function(input, output, session) {
   })
   
   output$locat = renderTable({
-    rv3$data
-  }, caption = "Basic information about the location:",
-  caption.placement = getOption("xtable.caption.placement", "top"), 
-  caption.width = getOption("xtable.caption.width", NULL))
+    data.frame(rv3$data)
+  }, caption = "Basic information:",
+     caption.placement = getOption("xtable.caption.placement", "top"), 
+     caption.width = getOption("xtable.caption.width", NULL)
+  )
   
   #### episode search ####
   rv4 <- reactiveValues(data=NULL)
@@ -162,8 +163,8 @@ server <- function(input, output, session) {
       rv4$tbl[,-c(5:7)]
   }, caption = "Episode information:",
      caption.placement = getOption("xtable.caption.placement", "top"), 
-     caption.width = getOption("xtable.caption.width", NULL))
-  
+     caption.width = getOption("xtable.caption.width", NULL)
+  )
 }
 
 shinyApp(ui, server)
