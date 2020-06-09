@@ -57,7 +57,7 @@ ui <- fluidPage(title = "Rick and Morty",
                                     selectInput("gen", "Gender",c("","female","male","genderless","unknown"))),
                                   actionButton("fil", "Filter")
                            ),
-                           tableOutput("byFilt")
+                           DT::dataTableOutput("byFilt")
                   ),
                   
                   
@@ -118,15 +118,14 @@ server <- function(input, output, session) {
     rv2$x = GET(rv2$data)$status_code
   })
   
-  output$byFilt = renderTable({
+  output$byFilt = DT::renderDataTable(
     if (rv2$x == "400" | rv2$x == "404")
       data.frame(Results = "No character matches the condition")
     else
       # Get the characters that satisfy the conditions given
-      fromJSON(rv2$data)$results[,-c(7:12)]  # columns of data frames removed
-  }, caption = "Character(s) that match the condition(s):",
-     caption.placement = getOption("xtable.caption.placement", "top"), 
-     caption.width = getOption("xtable.caption.width", NULL))
+      fromJSON(rv2$data)$results[,-c(7:12)],  # columns of data frames removed
+     caption = "Character(s) that match the condition(s):",
+     options = list(pageLength = 5))
   
   #### location ####
   rv3 <- reactiveValues(data=NULL)
