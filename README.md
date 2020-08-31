@@ -1,4 +1,7 @@
 # picklerick
+
+Visit the webapp at: https://qiushuang-xu.shinyapps.io/picklerick/
+
 What you can do with this web app:
 
 • Find a specific character by their name
