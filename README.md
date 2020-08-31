@@ -1,8 +1,8 @@
 # picklerick
 
-Visit the webapp at: https://qiushuang-xu.shinyapps.io/picklerick/
+This app scraps and returns information about the animated show "Rick and Morty".
 
-What you can do with this web app:
+What you can do with it:
 
 • Find a specific character by their name
 
@@ -11,3 +11,8 @@ What you can do with this web app:
 • Find a certain location by its name
 
 • Find information about a season or one episode
+
+
+Visit the webapp at: https://qiushuang-xu.shinyapps.io/picklerick/
+
+![Image](https://www.nme.com/wp-content/uploads/2020/04/rick-and-morty-season-4.jpg)
