@@ -2,7 +2,7 @@
 
 This app scraps and returns information about the animated show "Rick and Morty".
 
-What you can do with it:
+Things you can do with it:
 
 • Find a specific character by their name
 
